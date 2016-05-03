@@ -28,12 +28,6 @@ DOUBLE_LINK_NODE* create_duble_link_node(int value)
     return pDLinkNode;
 }
 
-/* 删除单身链表 */
-void delete_all_double_link_node( DOUBLE_LINK_NODE **ppDLinkNode )
-{
-
-}
-
 /* 查找 */
 DOUBLE_LINK_NODE* find_data_in_double_link(const DOUBLE_LINK_NODE *pDLinkNode, int data)
 {
@@ -41,7 +35,7 @@ DOUBLE_LINK_NODE* find_data_in_double_link(const DOUBLE_LINK_NODE *pDLinkNode, i
 }
 
 /* 插入数据 */
-int insert_data_in_double_link(DOUBLE_LINK_NODE *pDLinkNode, int data)
+int insert_data_in_double_link(DOUBLE_LINK_NODE **ppDLinkNode, int data)
 {
     DOUBLE_LINK_NODE *pNode;
     DOUBLE_LINK_NODE *pIndex;
@@ -62,20 +56,18 @@ int insert_data_in_double_link(DOUBLE_LINK_NODE *pDLinkNode, int data)
     */
 
     /* 查找数据是否存在 */
-    //
-
     pNode = create_duble_link_node( data );
 
     assert( NULL != pNode );
 
-    pIndex = pDLinkNode;
+    pIndex = *ppDLinkNode;
+
     while (NULL != pIndex->next) {
         pIndex = pIndex->next;
     }
 
-    pNode->prev = pIndex;
-    pNode->next = pIndex->next;
     pIndex->next = pNode;
+    pNode->prev = pIndex;
 
     return 1;
 }   
@@ -83,7 +75,18 @@ int insert_data_in_double_link(DOUBLE_LINK_NODE *pDLinkNode, int data)
 /* 删除数据 */
 int delete_data_from_double_link(DOUBLE_LINK_NODE **ppDLinkNode, int data)
 {
-    return 0;
+    DOUBLE_LINK_NODE *pNode;
+
+    pNode = *ppDLinkNode;
+
+    while( pNode->next != NULL ){
+        if ( pNode->data == data ){
+            pNode->prev->next = pNode->next;   
+            pNode->next->prev = pNode->prev;
+        }
+        pNode = pNode->next;
+    }
+    return 1;
 }
 
 /* 统计个数 */
@@ -118,10 +121,14 @@ int main(void)
     printf("sizeof(int): %d \n", sizeof(int));
     printf("sizeof(DOUBLE_LINK_NODE)：%d \n", sizeof(DOUBLE_LINK_NODE));
 
-    p = create_duble_link_node(1);
-    insert_data_in_double_link(p, 3);
-    insert_data_in_double_link(p, 2);
-    insert_data_in_double_link(p, 4);
+    p = create_duble_link_node(5);
+
+    insert_data_in_double_link(&p, 3);
+    insert_data_in_double_link(&p, 3);
+    insert_data_in_double_link(&p, 2);
+    insert_data_in_double_link(&p, 4);
+
+    delete_data_from_double_link(&p, 3);
     
     printf("%s \n", "==============");
 
